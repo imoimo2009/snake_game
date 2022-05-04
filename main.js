@@ -370,6 +370,11 @@ function Debug_Cls(){
 // イベントリスナ登録
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
+document.getElementById("btn_up").onclick = btnUpClickHandler;
+document.getElementById("btn_left").onclick =  btnLeftClickHandler;
+document.getElementById("btn_down").onclick =  btnDownClickHandler;
+document.getElementById("btn_right").onclick =  btnRightClickHandler;
+document.getElementById("btn_space").onclick =  btnSpaceClickHandler;
 
 // イベント処理
 
@@ -403,6 +408,26 @@ function keyDownHandler(e) {
 // キーが離されたとき
 function keyUpHandler(e) {
 
+}
+
+function btnUpClickHandler(e) {
+    Gv.vector = eVectorCode.VECTOR_UP;
+}
+
+function btnLeftClickHandler(e) {
+    Gv.vector = eVectorCode.VECTOR_LEFT;
+}
+
+function btnDownClickHandler(e) {
+    Gv.vector = eVectorCode.VECTOR_DOWN;
+}
+
+function btnRightClickHandler(e) {
+    Gv.vector = eVectorCode.VECTOR_RIGHT;
+}
+
+function btnSpaceClickHandler(e) {
+    Gv.key = " ";
 }
 
 // 初期化処理

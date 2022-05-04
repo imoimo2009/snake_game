@@ -22,3 +22,7 @@ body{
     background-color: #040;
     overflow-y: scroll;
 }
+input.button{
+    width: 80px;
+    font-weight: bold;
+}
