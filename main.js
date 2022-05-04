@@ -86,8 +86,9 @@ var Gv = new GlovalVars();
 
 function SaveHiscore(){
     var xhr = new XMLHttpRequest();
-    xhr.open("POST","./server.php?save_hiscore");
-    request = Gv.hiscore.toString();
+    xhr.open("POST","./server.php");
+    xhr.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
+    request = "save_hiscore=" + Gv.hiscore.toString();
     xhr.send(request);
     xhr.onreadystatechange = function(){
         if ((xhr.readyState == 4) && (xhr.status == 200)) {
