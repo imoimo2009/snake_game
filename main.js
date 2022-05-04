@@ -88,6 +88,11 @@ function SaveHiscore(){
     var xhr = new XMLHttpRequest();
     xhr.open("POST","./server.php");
     xhr.send("save_hiscore=" + Gv.hiscore);
+    xhr.onreadystatechange = function(){
+        if ((xhr.readyState == 4) && (xhr.status == 200)) {
+            alert(xhr.responseText);
+        }
+    };
 }
 
 function LoadHiscore(){

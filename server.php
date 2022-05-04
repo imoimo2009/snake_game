@@ -1,18 +1,19 @@
 <?php
 
-define("SAVE_FILE","hiscore.txt");
+define("SAVE_FILE","./hiscore.txt");
 
 if(isset($_POST["save_hiscore"])) {
     $hiscore = $_POST["save_hiscore"];
     file_put_contents(SAVE_FILE,$hiscore);
     echo "OK";
-}
-if(isset($_GET["load_hiscore"])) {
+}elseif(isset($_GET["load_hiscore"])) {
     if(file_exists(SAVE_FILE)){
         $hiscore = file_get_contents(SAVE_FILE);
         echo $hiscore;
     }else{
         echo "NG";
     }
+}else{
+    echo "OK";
 }
 ?>
