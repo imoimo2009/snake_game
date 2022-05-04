@@ -16,14 +16,22 @@ const FIELD_ARRAY		= (FIELD_WIDTH * FIELD_HEIGHT);
 
 const SNAKE_LENGTH		= 5;
 const SNAKE_SPEED		= 2;
-const FOOD_START		= 100;
+const FOOD_START		= 255;
 const FOOD_APPEND		= 30;
 
 const TITLE_STR			= "- SNAKE GAME -";
-const START_STR			= "<< PUSH SPACE TO START! >>";
+const START_STR			= "<< MOVE KEY TO START! >>";
 const RESTART_STR		= "<< PUSH SPACE TO RESTART! >>";
 const GOVER_STR			= "< GAME  OVER >";
 const HISCORE_STR       = "<< YOU GET A HISCORE !! >>"
+
+const HELP_UP_STR       = "[W][↑]"
+const HELP_LEFT_STR     = "[A][←]"
+const HELP_DOWN_STR     = "[S][↓]"
+const HELP_RIGHT_STR    = "[D][→]"
+
+const HELP_MYCHR_STR    = "MYCHAR"
+const HELP_FOOD_STR     = "FOOD"
 
 const eCharCode = {
     CHR_BLANK       : {color : "#000000"},
@@ -57,6 +65,7 @@ class SnakeBody{
 
 class GlovalVars{
     constructor(){
+        this.counter = 0
         this.vector = eVectorCode.VECTOR_FREE;
         this.key = "";
         this.stage = [];
@@ -267,7 +276,47 @@ function Draw_Snake(){
         if(i > 0){
             c = "#FFFF00";
         }
+        if(Gv.food < FOOD_APPEND){
+            if(Gv.counter % 4 == 0){
+                c = "#FF0000";
+            }
+        }
         FillArc(x,y,CHAR_SIZE / 2,0,360,c);
+    }
+}
+
+function Draw_Title(){
+    var idx;
+    for(i = 0;i < Gv.stage.length ; i++){
+        if(Gv.stage[i] == eCharCode.CHR_FOOD){
+            idx = i;
+            break;
+        }
+    }
+    var fx = Get_X(idx) * CHAR_SIZE + 8;
+    var fy = Get_Y(idx) * CHAR_SIZE - 10;
+    if(fx < 40)fx = 40;
+    if(fx > GAMEAREA_WIDTH - 40)fx = GAMEAREA_WIDTH - 40;
+    if(fy < 32)fy += 40;
+    DrawStringCenter(HELP_FOOD_STR,fx,fy,12,"#0FF",50);
+    const x = GAMEAREA_WIDTH / 2 + 10
+    const y = GAMEAREA_HEIGHT / 2 + 6
+    DrawStringCenter(HELP_MYCHR_STR,x     ,y - 50,16,"#FF0",50);
+    DrawStringCenter(HELP_UP_STR   ,x     ,y - 30,12,"#DDD",50);
+    DrawStringCenter(HELP_LEFT_STR ,x - 50,y    ,12,"#DDD",50);
+    DrawStringCenter(HELP_DOWN_STR ,x     ,y + 30,12,"#DDD",50);
+    DrawStringCenter(HELP_RIGHT_STR,x + 50,y    ,12,"#DDD",50);
+    DrawStringCenter(TITLE_STR,322,102,32,"#888",640);
+    DrawStringCenter(TITLE_STR,320,100,32,"#FFF",640);
+    DrawStringCenter(START_STR,320,400,16,"#FFF",640);
+}
+
+function Draw_GameOver(){
+    FillRectAlpha(0,0,640,480,"#000",0.5);
+    DrawStringCenter(GOVER_STR,320,240,16,"#FFF",640);
+    DrawStringCenter(RESTART_STR,320,300,16,"#FFF",640);
+    if(Gv.score > 0 && Gv.score == Gv.hiscore){
+        DrawStringCenter(HISCORE_STR,320,400,16,"#FF0",640);
     }
 }
 
@@ -279,16 +328,11 @@ function Draw_UI(){
     switch(Gv.mode){
         case eGameMode.MODE_GAME:
             if(Gv.started == false){
-                DrawStringCenter(TITLE_STR,320,100,16,"#FFF",640);
+                Draw_Title();
             }
             break;
         case eGameMode.MODE_GOVER:
-            FillRectAlpha(0,0,640,480,"#000",0.5);
-            DrawStringCenter(GOVER_STR,320,240,16,"#FFF",640);
-            DrawStringCenter(RESTART_STR,320,300,16,"#FFF",640);
-            if(Gv.score > 0 && Gv.score == Gv.hiscore){
-                DrawStringCenter(HISCORE_STR,320,400,16,"#FF0",640);
-            }
+            Draw_GameOver();
             break;
     }
 }
@@ -333,18 +377,22 @@ document.addEventListener("keyup", keyUpHandler, false);
 function keyDownHandler(e) {
     Gv.key = e.key
     switch(e.key){
+        case "d":
         case "Right":
         case "ArrowRight":
             Gv.vector = eVectorCode.VECTOR_RIGHT;
             break;
+        case "a":
         case "Left":
         case "ArrowLeft":
             Gv.vector = eVectorCode.VECTOR_LEFT;
             break;
+        case "w":
         case "Up":
         case "ArrowUp":
             Gv.vector = eVectorCode.VECTOR_UP;
             break;
+        case "s":
         case "Down":
         case "ArrowDown":
             Gv.vector = eVectorCode.VECTOR_DOWN;
@@ -403,6 +451,7 @@ function QuitGame(){
 
 // メインループ
 function main(){
+    Gv.counter++;
     UpdateGame();
     DrawGame();
 }
