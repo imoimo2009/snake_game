@@ -14,6 +14,6 @@ if(isset($_POST["save_hiscore"])) {
         echo "NG";
     }
 }else{
-    echo "OK";
+    var_dump($_POST);
 }
 ?>
