@@ -1,0 +1,24 @@
+body{
+    margin:0px;
+    padding:0px;
+    text-align: center;
+    background-color: #DDDDDD;
+}
+#div_debug_outer{
+    display: none;
+    font-family: monospace;
+    font-size: 10px;
+    text-align: left;
+    color: #040;
+    background-color: #ABA;
+}
+#div_debug{
+    width: 640px;
+    height: 150px;
+    color: #0F0;
+    font-family: monospace;
+    font-size: 8px;
+    text-align: left;
+    background-color: #040;
+    overflow-y: scroll;
+}
