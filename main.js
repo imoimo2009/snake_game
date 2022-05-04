@@ -22,8 +22,8 @@ const FOOD_APPEND		= 30;
 const TITLE_STR			= "- SNAKE GAME -";
 const START_STR			= "<< MOVE KEY TO START! >>";
 const RESTART_STR		= "<< PUSH SPACE TO RESTART! >>";
-const GOVER_STR			= "< GAME  OVER >";
-const HISCORE_STR       = "<< YOU GET A HISCORE !! >>"
+const GOVER_STR			= "< GAME OVER >";
+const HISCORE_STR       = "<< YOU GOT A HISCORE !! >>"
 
 const HELP_UP_STR       = "[W][↑]"
 const HELP_LEFT_STR     = "[A][←]"
@@ -81,6 +81,28 @@ class GlovalVars{
 
 // グローバル変数定義
 var Gv = new GlovalVars();
+
+// WebAPI関連 ####################################################################
+
+function SaveHiscore(){
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST","./server.php");
+    xhr.send("save_hiscore=" + Gv.hiscore);
+}
+
+function LoadHiscore(){
+    var xhr = new XMLHttpRequest();
+	xhr.open("GET","./server.php?load_hiscore",true); 
+	xhr.responseType = "text";
+    xhr.onreadystatechange = function(){
+        if ((xhr.readyState == 4) && (xhr.status == 200)) {
+            if(isFinite(xhr.responseText)){
+                Gv.hiscore = Number(xhr.responseText);
+            }
+        }
+    };
+    xhr.send(null);
+}
 
 // 描画API関連 ####################################################################
 
@@ -437,6 +459,7 @@ function InitGame(){
     Gv.started = false;
     Gv.food = FOOD_START;
     Gv.score = 0;
+    LoadHiscore();
     Init_Stage();
     Init_Snake();
 }
@@ -456,6 +479,7 @@ function UpdateGame(){
         case eGameMode.MODE_GOVER:
             if(Gv.key == " "){
                 Gv.key = "";
+                SaveHiscore();
                 InitGame();
             }
             break;
@@ -484,7 +508,6 @@ function main(){
 // エントリポイント ###################################################################
 
 // 初期化処理
-document.title = TITLE_STR;
 Switch_DebugMode();
 InitGame();
 InitDraw();
