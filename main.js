@@ -90,11 +90,13 @@ function SaveHiscore(){
     xhr.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
     request = "save_hiscore=" + Gv.hiscore.toString();
     xhr.send(request);
-    xhr.onreadystatechange = function(){
-        if ((xhr.readyState == 4) && (xhr.status == 200)) {
-            alert(xhr.responseText);
-        }
-    };
+    if(Gv.debug){
+        xhr.onreadystatechange = function(){
+            if ((xhr.readyState == 4) && (xhr.status == 200)) {
+                alert(xhr.responseText);
+            }
+        };
+    }
 }
 
 function LoadHiscore(){
@@ -105,6 +107,9 @@ function LoadHiscore(){
         if ((xhr.readyState == 4) && (xhr.status == 200)) {
             if(isFinite(xhr.responseText)){
                 Gv.hiscore = Number(xhr.responseText);
+            }
+            if(Gv.debug){
+                alert(xhr.responseText);
             }
         }
     };
