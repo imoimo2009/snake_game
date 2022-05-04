@@ -471,7 +471,6 @@ function InitGame(){
     Gv.started = false;
     Gv.food = FOOD_START;
     Gv.score = 0;
-    LoadHiscore();
     Init_Stage();
     Init_Snake();
 }
@@ -521,6 +520,7 @@ function main(){
 
 // 初期化処理
 Switch_DebugMode();
+LoadHiscore();
 InitGame();
 InitDraw();
 // メインループ(10ミリ秒ごとに呼び出す)
