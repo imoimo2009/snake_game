@@ -5,20 +5,23 @@ define("ACCESS_LOG","./access.log");
 
 $result = "NG";
 
+WriteAccessLog("GameStart");
 if(isset($_POST["save_hiscore"])) {
     $score = $_POST["save_hiscore"];
     $hiscore = file_get_contents(SAVE_FILE);
     if($score > $hiscore){
-        WriteAccessLog("Data Save");
         if(file_put_contents(SAVE_FILE,$score,LOCK_EX)){
             $result = "OK";
+            WriteAccessLog("DataSaved");
         }
+    }else{
+        WriteAccessLog("AlreadyUpdated");
     }
 }elseif(isset($_GET["load_hiscore"])) {
-    WriteAccessLog("Data Load");
     if(file_exists(SAVE_FILE)){
         $hiscore = file_get_contents(SAVE_FILE);
         $result = $hiscore;
+        WriteAccessLog("DataLoaded");
     }
 }
 echo $result;

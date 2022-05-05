@@ -85,6 +85,7 @@ var Gv = new GlovalVars();
 // WebAPI関連 ####################################################################
 
 function SaveHiscore(){
+    if(Gv.score < Gv.hiscore) return;
     var xhr = new XMLHttpRequest();
     xhr.open("POST","./server.php");
     xhr.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
