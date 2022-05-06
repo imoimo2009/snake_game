@@ -82,8 +82,36 @@ class GlovalVars{
 // グローバル変数定義
 var Gv = new GlovalVars();
 
+// デバッグ関連 #####################################################################
+
+// デバッグウィンドウの表示切替
+function Switch_DebugMode(){
+    if(Gv.debug){
+        disp = "inline-block";
+    }else{
+        disp = "none";
+    }
+    document.getElementById("div_debug_outer").style.display = disp;
+}
+
+// デバッグウィンドウに文字列を表示する
+function Debug_Println(str){
+    if(Gv.debug){
+        const d = document.getElementById("div_debug");
+        d.innerHTML += str + "<br>" + ">";
+    }
+}
+
+// デバッグウィンドウを消去する
+function Debug_Cls(){
+    if(Gv.debug){
+        document.getElementById("div_debug").innerHTML = ">";
+    }
+}
+
 // WebAPI関連 ####################################################################
 
+// サーバにハイスコアを送信する
 function SaveHiscore(){
     if(Gv.score < Gv.hiscore) return;
     var xhr = new XMLHttpRequest();
@@ -100,6 +128,7 @@ function SaveHiscore(){
     }
 }
 
+// サーバからハイスコアを受信する
 function LoadHiscore(){
     var xhr = new XMLHttpRequest();
 	xhr.open("GET","./server.php?load_hiscore",true); 
@@ -119,11 +148,13 @@ function LoadHiscore(){
 
 // 描画API関連 ####################################################################
 
+// 塗りつぶした矩形を描画する
 function FillRect(x,y,w,h,c){
     Tx.fillStyle = c;
     Tx.fillRect(x,y,w,h);
 }
 
+// 半透明色で塗りつぶした矩形を描画する
 function FillRectAlpha(x,y,w,h,c,p){
     Tx.globalAlpha = p;
     Tx.fillStyle = c;
@@ -131,14 +162,17 @@ function FillRectAlpha(x,y,w,h,c,p){
     Tx.globalAlpha = 1;
 }
 
+// 描画領域全体を塗りつぶす
 function FillScreen(c){
     FillRect(0,0,Cv.clientWidth,Cv.clientHeight,c)
 }
 
+// 角度をラジアンに変換する
 function Deg2Rad(d){
     return (d * (Math.PI / 180))
 }
 
+// 塗りつぶした円弧を描画する
 function FillArc(x,y,d,r1,r2,c){
     Tx.beginPath()
     Tx.arc(x,y,d,Deg2Rad(r1),Deg2Rad(r2),false);
@@ -147,6 +181,7 @@ function FillArc(x,y,d,r1,r2,c){
     Tx.closePath()
 }
 
+// 文字列を描画する
 function DrawString(str,x,y,s,c){
     Tx.fillStyle = c;
     Tx.font = s + "px monospace";
@@ -154,6 +189,7 @@ function DrawString(str,x,y,s,c){
     Tx.fillText(str,x,y);
 }
 
+// センタリングされた文字列を描画する
 function DrawStringCenter(str,x,y,s,c,w){
     Tx.fillStyle = c;
     Tx.font = s + "px monospace";
@@ -163,36 +199,44 @@ function DrawStringCenter(str,x,y,s,c,w){
 
 // 各種関数定義 #####################################################################
 
+// 指定範囲のランダム値を取得する
 function Get_Random(min,max){
     return Math.trunc(Math.random() * (max - min) + min); 
 }
 
-function Get_Index(a,b){
-    return (b * FIELD_WIDTH + a);
+// X座標、Y座標からステージ配列のインデックス値を返す
+function Get_Index(x,y){
+    return (y * FIELD_WIDTH + x);
 }
 
+// ステージ配列のインデックス値からX座標を返す
 function Get_X(a){
     return (a % FIELD_WIDTH);
 }
 
+// ステージ配列のインデックス値からY座標を返す
 function Get_Y(a){
     return Math.trunc(a / FIELD_WIDTH);
 }
 
+// グラフィック座標からステージの座標を取得する
 function Get_Coord(a){
     return Math.trunc(a / CHAR_SIZE);
 }
 
+// 指定グラフィック座標のステージ配列値を取得する
 function Get_StageVars(x,y){
     return Gv.stage[Get_Index(Get_Coord(x),Get_Coord(y))];
 }
 
+// 指定グラフィック座標のステージ配列値を設定する
 function Set_StageVars(x,y,v){
     Gv.stage[Get_Index(Get_Coord(x),Get_Coord(y))] = v;
 }
 
 // 各種初期化処理 ####################################################################
 
+// ヘビ配列の初期化
 function Init_Snake(){
     Gv.snake = new Array(SNAKE_LENGTH);
     for(i = 0 ; i < Gv.snake.length ; i++){
@@ -200,21 +244,13 @@ function Init_Snake(){
     }
 }
 
+// ゲームオーバー処理開始
 function Init_GameOver(){
     Debug_Println(GOVER_STR);
     Gv.mode = eGameMode.MODE_GOVER;
 }
 
-function Put_Food(){
-    stg = [];
-    Gv.stage.forEach((v,i) => {
-        if(v == eCharCode.CHR_BLANK){
-            stg.push(i);
-        }
-    });
-    Gv.stage[stg[Get_Random(0,stg.length)]] = eCharCode.CHR_FOOD;
-}
-
+// ステージ配列を初期化
 function Init_Stage(level){
     Gv.stage = new Array(FIELD_ARRAY);
     for(i = 0;i < Gv.stage.length;i++){
@@ -230,6 +266,20 @@ function Init_Stage(level){
     Put_Food();
 }
 
+// ゲーム更新処理 ####################################################################
+
+// エサを置く
+function Put_Food(){
+    stg = [];
+    Gv.stage.forEach((v,i) => {
+        if(v == eCharCode.CHR_BLANK){
+            stg.push(i);
+        }
+    });
+    Gv.stage[stg[Get_Random(0,stg.length)]] = eCharCode.CHR_FOOD;
+}
+
+// エサを食べる
 function Get_Food(){
     l = Gv.snake.length;
     Gv.snake.push(new SnakeBody);
@@ -243,6 +293,7 @@ function Get_Food(){
     }
 }
 
+// 当たり判定処理
 function Check_Collision(x,y){
     const v = Get_StageVars(x,y);
     if(Gv.started){
@@ -254,6 +305,7 @@ function Check_Collision(x,y){
     }
 }
 
+// ヘビ移動
 function Move_Snake(){
     Debug_Cls();
     Debug_Println("x=" + Gv.snake[0].x);
@@ -295,6 +347,7 @@ function Move_Snake(){
 
 // 描画処理 #######################################################################
 
+// ステージ描画
 function Draw_Stage(){
     Gv.stage.forEach(function(v,i){
         const x = Get_X(i) * CHAR_SIZE;
@@ -303,6 +356,7 @@ function Draw_Stage(){
     });
 }
 
+// ヘビ描画
 function Draw_Snake(){
     for(i = Gv.snake.length - 1;i >= 0;i--){
         const x = Gv.snake[i].x + CHAR_SIZE / 2;
@@ -320,6 +374,7 @@ function Draw_Snake(){
     }
 }
 
+// タイトル画面描画
 function Draw_Title(){
     var idx;
     for(i = 0;i < Gv.stage.length ; i++){
@@ -346,6 +401,7 @@ function Draw_Title(){
     DrawStringCenter(START_STR,320,400,16,"#FFF",640);
 }
 
+// ゲームオーバー画面描画
 function Draw_GameOver(){
     FillRectAlpha(0,0,640,480,"#000",0.5);
     DrawStringCenter(GOVER_STR,320,240,16,"#FFF",640);
@@ -355,6 +411,7 @@ function Draw_GameOver(){
     }
 }
 
+// ユーザーインターフェース描画
 function Draw_UI(){
     DrawString("LENGTH: " + Gv.snake.length,2,477,14,"#FFFFFF");
     DrawString("FOOD: " + Gv.food,100,477,14,"#00FFFF");
@@ -370,34 +427,6 @@ function Draw_UI(){
             Draw_GameOver();
             break;
     }
-}
-
-// デバッグ関連 #####################################################################
-
-function Switch_DebugMode(){
-    if(Gv.debug){
-        disp = "inline-block";
-    }else{
-        disp = "none";
-    }
-    document.getElementById("div_debug_outer").style.display = disp;
-}
-
-function Debug_Print(str){
-    if(Gv.debug){
-        document.getElementById("div_debug").innerHTML = ">" + str;
-    }
-}
-
-function Debug_Println(str){
-    if(Gv.debug){
-        const d = document.getElementById("div_debug");
-        d.innerHTML += str + "<br>" + ">";
-    }
-}
-
-function Debug_Cls(){
-    Debug_Print("");
 }
 
 // ゲームフレームワーク #################################################################
@@ -445,28 +474,34 @@ function keyUpHandler(e) {
 
 }
 
+// 上ボタンが押されたとき
 function btnUpClickHandler(e) {
     Gv.vector = eVectorCode.VECTOR_UP;
 }
 
+// 左ボタンが押されたとき
 function btnLeftClickHandler(e) {
     Gv.vector = eVectorCode.VECTOR_LEFT;
 }
 
+// 下ボタンが押されたとき
 function btnDownClickHandler(e) {
     Gv.vector = eVectorCode.VECTOR_DOWN;
 }
 
+// 右ボタンが押されたとき
 function btnRightClickHandler(e) {
     Gv.vector = eVectorCode.VECTOR_RIGHT;
 }
 
+// スペースボタンが押されたとき
 function btnSpaceClickHandler(e) {
     Gv.key = " ";
 }
 
 // 初期化処理
 function InitGame(){
+    document.activeElement.blur();
     Gv.mode = eGameMode.MODE_GAME;
     Gv.vector = eVectorCode.VECTOR_FREE;
     Gv.started = false;
